@@ -4,35 +4,16 @@ import { ElMessage } from "element-plus";
 import UserInfoService from "@/util/UserInfoService";
 
 // 动态加载所有子路由模块
-const modules = import.meta.glob("./modules/**/*.js");
-
-const modulesRouters = async () => {
-  const res = [];
-
-  for (const path in modules) {
-    let module = await modules[path]();
-
-    // 检查模块的导出类型
-    if (Array.isArray(module.default)) {
-      // 如果是数组，直接将数组中的路由项添加到路由配置中
-      res.push(...module.default);
-    } else if (typeof module.default === 'object') {
-      // 如果是对象，直接添加该对象
-      res.push(module.default);
-    } else {
-      console.error(`模块 ${path} 的导出类型无效`);
-    }
-
-    //res.push(module.default);
-  }
-
-  return res;
-};
+const modules = import.meta.glob("./modules/**/*.js",{ eager: true });
 
 // 遍历每个模块，动态导入并将路由配置加入 routes 数组
 
 // console.log(await modulesRouters());
 
+const modulesRouters = ()=>{
+  const dashboardRoute = routes.find(route => route.name === 'Dashboard');
+  return dashboardRoute.children;
+}
 
 const routes = [
   { path: "/", redirect: "/login" },
@@ -49,7 +30,7 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: () => import("@/layout/Dashboard.vue"),
-    children: await modulesRouters(),
+    children: [],
   },
   // 404 路由，放在最后
   {
@@ -59,10 +40,26 @@ const routes = [
   }
 ];
 
-const router = createRouter({
+// 遍历导入的模块，合并所有路由配置
+Object.values(modules).forEach((module) => {
+  const dashboardRoute = routes.find(route => route.name === 'Dashboard');
+  if (Array.isArray(module.default)) {
+    dashboardRoute.children.push(...module.default);
+  }
+  else if (typeof module.default === 'object') {
+    // 如果是对象，直接添加该对象
+    dashboardRoute.children.push(module.default);
+  }  else {
+    console.warn('模块未导出默认的路由数组:', module);
+  }
+});
+
+const router =  createRouter({
   history: createWebHistory(),
   routes,
 });
+
+
 
 router.beforeEach((to, from, next) => {
   // 判断目标路由是否需要认证

@@ -1,6 +1,7 @@
 <template>
     <div class="webview-container">
-      <iframe :src="url" frameborder="0" width="100%" height="100%"></iframe>
+      <!-- <iframe :src="url" frameborder="0" width="100%" height="100%"></iframe> -->
+       {{ url }}
     </div>
   </template>
   

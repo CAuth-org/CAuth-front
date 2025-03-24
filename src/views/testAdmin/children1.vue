@@ -4,13 +4,14 @@ import getVersionApi from "@/api/getVersion";
 import { ref, onMounted } from "vue";
 const version = ref("");
 
-onMounted( async () => {
+onMounted(async () => {
   const res = await getVersionApi.getversion();
   version.value = res;
 })
 </script>
 <template>
-    <div>
-        {{ version }}
-    </div>
+  <div>
+    {{ version }}
+    <webview url="http://www.bilibili.com"></webview>
+  </div>
 </template>
