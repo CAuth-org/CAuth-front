@@ -65,6 +65,7 @@ const version = ref("V1.0.0");
 
 .router-view {
   height: 100%;
+  box-sizing: border-box;
 }
 
 .el-header {
