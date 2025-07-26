@@ -52,15 +52,21 @@ const version = ref("V1.0.0");
 
 
 .component {
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+  min-height: 100vh;
 }
 
 .box {
-  background-color: white;
-  box-shadow: 0px 0px 12px rgba(0, 0, 0, .12);
-  /* 半透明灰色阴影 */
-  border-radius: 3px;
-  /* 可选：圆角 */
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .router-view {
@@ -70,33 +76,40 @@ const version = ref("V1.0.0");
 
 .el-header {
   padding: 10px 10px 0 10px;
+  border: none;
 }
 
 .el-main {
   padding: 10px 10px 5px 10px;
+  background-color: transparent;
 }
 
 .slide-enter-active,
 .slide-leave-active {
-	transition: opacity 0.1s ease-in-out,transform 0.1s ease-in-out;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .slide-leave-to {
-	opacity: 0;
-  transform: translateX(5%); /* 初始时从右侧之外开始 */
-}
-
-.slide-enter-from{
   opacity: 0;
-  transform: translateX(-5%);
+  transform: translateX(30px);
 }
 
-.footer{
-  background-color: none;
-  margin: 0px 10px 10px 10px;
-  font-size: 10px;
+.slide-enter-from {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.footer {
+  margin: 10px;
+  font-size: 12px;
   text-align: center;
-  opacity: 0.5;
+  color: #888;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.footer:hover {
+  opacity: 1;
 }
 
 

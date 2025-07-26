@@ -4,7 +4,7 @@
       <el-card class="login-card">
         <h2 class="login-title">后台管理系统</h2>
         
-        <el-form :model="loginForm" :rules="rules" ref="loginFormRef">
+        <el-form :model="loginForm" :rules="rules" ref="loginFormRef" @keyup.enter="handleLogin">
           <!-- 用户名 -->
           <el-form-item prop="username">
             <el-input v-model="loginForm.username" placeholder="请输入用户名">
@@ -79,12 +79,11 @@
         minWidth: 200.0,
         scale: 1.0,
         scaleMobile: 1.0,
-        color: 0x5588, // 主要颜色（蓝色）
-        shininess: 30, // 光亮度
-        waveHeight: 15, // 波浪高度
-        waveSpeed: 0.5, // 波浪速度
-        zoom: 5, // 缩放
-        mouseControls: false,	// 是否允许动画和鼠标手势交互，想启用的话改成true
+        color: 0x1a237e, // 深靛蓝，更沉稳
+        shininess: 50, // 增加光泽感
+        waveHeight: 10, // 降低波浪高度，使其更柔和
+        waveSpeed: 0.3, // 减慢波浪速度
+        zoom: 0.8, // 稍微缩小视野
       });
 
       // vantaEffect =  BIRDS({
@@ -113,27 +112,22 @@
   
   // 处理登录逻辑
   const handleLogin = () => {
-    loginFormRef.value.validate((valid) => {
-        loginApi.login(loginForm.value).then((res) => {
-          console.log(res);
-          UserInfoService.set(res)
-          router.push("/dashboard"); // 登录成功后跳转
-        });
-        //StrorageService.set("token", "123456",5000000);
-        //router.push("/dashboard"); // 登录成功后跳转
-    //   if (!valid) return;
-  
-    //   loading.value = true;
-    //   setTimeout(() => {
-    //     loading.value = false;
-  
-    //     if (loginForm.value.username === "admin" && loginForm.value.password === "123456") {
-    //       ElMessage.success("登录成功");
-    //       router.push("/dashboard"); // 登录成功后跳转
-    //     } else {
-    //       ElMessage.error("用户名或密码错误");
-    //     }
-    //   }, 1000);
+    loginFormRef.value.validate(async (valid) => {
+      if (!valid) return;
+
+      loading.value = true;
+      try {
+        const res = await loginApi.login(loginForm.value);
+        console.log(res);
+        UserInfoService.set(res);
+        router.push("/dashboard"); // 登录成功后跳转
+        ElMessage.success("登录成功");
+      } catch (error) {
+        console.error("登录失败:", error);
+        ElMessage.error("用户名或密码错误");
+      } finally {
+        loading.value = false;
+      }
     });
   };
   </script>
@@ -147,12 +141,31 @@
     width: 100vw;
   }
   
+  @keyframes fadeIn-down {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .login-card {
-    width: 350px;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: rgba(255, 255, 255,0.8);
+    width: 400px; /* 适当加宽 */
+    padding: 30px;
+    border-radius: 15px; /* 更大的圆角 */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); /* 更深的阴影 */
+    background-color: rgba(255, 255, 255, 0.15); /* 毛玻璃效果 */
+    backdrop-filter: blur(10px); /* 模糊背景 */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* 增加边框，提升质感 */
+    animation: fadeIn-down 0.8s ease-out; /* 应用进入动画 */
+  }
+  
+  .login-title {
+    color: #fff; /* 标题颜色改为白色 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* 加深文字阴影以提高对比度 */
   }
   
   .login-title {
@@ -162,6 +175,60 @@
   
   .login-button {
     width: 100%;
+    border: none;
+    background: linear-gradient(45deg, #409eff, #66b1ff);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+  }
+
+  .login-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(64, 158, 255, 0.4);
+    filter: brightness(1.1);
+  }
+
+  .login-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(64, 158, 255, 0.3);
+  }
+
+  /* --- Input Styles --- */
+  :deep(.el-input__wrapper) {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 0;
+    padding: 0 5px;
+    transition: border-color 0.3s ease;
+  }
+
+  :deep(.el-input__wrapper.is-focus) {
+    border-color: #409eff;
+  }
+
+  :deep(.el-input__inner) {
+    color: #fff !important;
+    background-color: transparent !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); /* 为输入文字添加阴影 */
+  }
+
+  :deep(.el-input__inner::placeholder) {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  :deep(.el-input__prefix .el-icon) {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  /* --- Checkbox Styles --- */
+  :deep(.el-checkbox__label) {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4); /* 为复选框文字添加阴影 */
+  }
+
+  :deep(.el-checkbox__input.is-checked .el-checkbox__inner) {
+    background-color: #409eff;
+    border-color: #409eff;
   }
 
   .vanta-bg{

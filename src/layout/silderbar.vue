@@ -28,22 +28,40 @@ const goTo = (path) => {
 </script>
 
 <template>
-  <el-menu :default-active="activeRoute" router>
+  <div class="menu-container">
     <div class="Nav-title">
       CAuth-Admin
     </div>
-    <MenuItem :menu="menuItems"></MenuItem>
-  </el-menu>
+    <el-menu :default-active="activeRoute" router class="el-menu-vertical">
+      <MenuItem :menu="menuItems"></MenuItem>
+    </el-menu>
+  </div>
 </template>
 
 <style scoped>
-.el-menu {
+.menu-container {
   height: 100%;
-  border: 0px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* 确保圆角生效 */
+  display: flex;
+  flex-direction: column;
 }
 
-.el-menu-item-select {
-  color: #409EFF !important;
+.el-menu-vertical {
+  flex-grow: 1;
+  border: none;
+  overflow-y: auto;
+  background-color: #f5f7fa;
+}
+
+.el-menu-vertical::-webkit-scrollbar {
+  width: 6px;
+}
+
+.el-menu-vertical::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+  border-radius: 3px;
 }
 
 .Nav-title {
@@ -52,7 +70,18 @@ const goTo = (path) => {
   font-weight: bold;
   color: #fff;
   padding: 15px 0;
-  background-color: #409EFF;
-  border-bottom: 1px solid #dcdfe6;
+  background: linear-gradient(135deg, #409EFF, #66b1ff);
+  transition: all 0.3s ease;
+}
+
+.Nav-title:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* 移除旧的 .el-menu 样式，因为已经被 .menu-container 和 .el-menu-vertical 替代 */
+
+.el-menu-item-select {
+  color: #409EFF !important;
 }
 </style>
